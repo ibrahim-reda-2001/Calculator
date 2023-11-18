@@ -2,13 +2,13 @@
 #include "HAL/KPD/KPD_interface.h"
 /*********************** Operation Functions **************************/
 u32 arrayToNumber(u32 arr[], u8 size) {
-    int result = 0;
+	int result = 0;
 
-    for (int i = 0; i < size; i++) {
-        result = result * 10 + arr[i];
-    }
+	for (int i = 0; i < size; i++) {
+		result = result * 10 + arr[i];
+	}
 
-    return result;
+	return result;
 }
 u8 check_password(u8 *arr1,u8 *arr2,u8 size){
 	u8 check=0;
@@ -48,146 +48,150 @@ int main(void){
 	//set password
 	LCD_voidSendString("Set Password ");
 	while(1){
+		do{
+			key=KPD_u8GetPresssed();
+
+		}
+		while(key==0xff);
+
+		if(key=='?'){
+
+			break;
+		}
+		LCD_voidSetPosition(2,num_of_pass+1);
+		LCD_voidSendNumber(key);
+		_delay_ms(100);
+		LCD_voidSetPosition(2,num_of_pass+1);
+		LCD_voidSendChar('*');//this put * in number u write
+		Password[num_of_pass]=key;//this array to store password
+		num_of_pass++;
+	}
+	u8 check_pass_counter=0;
+
+	while(1){
+		LCD_voidClearScreen();
+		key=0xFF;
+		_delay_ms(100);
+		LCD_voidSendString("Check Password");
+		while(key!='?'){ /*********************** Check Password  *************************/
+
+			do{
+				key=KPD_u8GetPresssed();
+
+			}
+			while(key==0xff);
+
+			if(key=='?'){
+				check_pass_counter=0;
+
+				break;
+			}
+			LCD_voidSetPosition(2,check_pass_counter+1);
+			LCD_voidSendNumber(key);
+			_delay_ms(200);
+			LCD_voidSetPosition(2,check_pass_counter+1);
+			LCD_voidSendChar('*');
+			CheckPassword[check_pass_counter]=key;//this array store password to compare
+			check_pass_counter++;
+		}
+		if(check_password(CheckPassword,Password,check_password_size)){
+			//function to compare password array with password check and return 1 if equal
+			while(1){
+			LCD_voidClearScreen();
+			u8 operation =0;//to which operation chosen
+			LCD_voidSetPosition(1,5);
+			LCD_voidSendString("Mastering");
+			LCD_voidSetPosition(2,5);
+			LCD_voidSendString("Embedded ");
+			_delay_ms(500);
+			LCD_voidClearScreen();
+			LCD_voidSetPosition(1,3);
+			LCD_voidSendString("Calculator ");
+			_delay_ms(500);
+			LCD_voidClearScreen();
+
+			/********************** getting first number ******************/
+			u8	counter1=1;
+			u8 arr_counter1=0;
+			while(1){
 				do{
 					key=KPD_u8GetPresssed();
 
 				}
 				while(key==0xff);
 
-				if(key=='?'){
-
+				if(key=='+'||key=='*'||key=='-'||key=='/'){
+					operation=key;//this used for switch case
+					LCD_voidSetPosition(1,counter1);
+					LCD_voidSendChar(key);
 					break;
 				}
-LCD_voidSetPosition(2,num_of_pass+1);
-LCD_voidSendNumber(key);
-_delay_ms(100);
-LCD_voidSetPosition(2,num_of_pass+1);
-LCD_voidSendChar('*');//this put * in number u write
-Password[num_of_pass]=key;//this array to store password
-num_of_pass++;
-			}
-	u8 check_pass_counter=0;
 
-	while(1){
-		LCD_voidClearScreen();
-		_delay_ms(100);
-		LCD_voidSendString("Check Password");
-		while(1){ /*********************** Check Password  *************************/
-
-						do{
-							key=KPD_u8GetPresssed();
-
-						}
-						while(key==0xff);
-
-						if(key=='?'){
-							check_pass_counter=0;
-
-							break;
-						}
-		LCD_voidSetPosition(2,check_pass_counter+1);
-		LCD_voidSendNumber(key);
-		_delay_ms(200);
-		LCD_voidSetPosition(2,check_pass_counter+1);
-		LCD_voidSendChar('*');
-		CheckPassword[check_pass_counter]=key;//this array store password to compare
-		check_pass_counter++;
-					}
-		if(check_password(CheckPassword,Password,check_password_size)){//function to compare password array with password check and return 1 if equal
-LCD_voidClearScreen();
-		u8 operation =0;//to which operation chosen
-		LCD_voidSetPosition(1,5);
-		LCD_voidSendString("Mastering");
-		LCD_voidSetPosition(2,5);
-		LCD_voidSendString("Embedded ");
-		_delay_ms(500);
-		LCD_voidClearScreen();
-		LCD_voidSetPosition(1,3);
-		LCD_voidSendString("Calculator ");
-		_delay_ms(500);
-		LCD_voidClearScreen();
-
-		/********************** getting first number ******************/
-		u8	counter1=1;
-		u8 arr_counter1=0;
-		while(1){
-			do{
-				key=KPD_u8GetPresssed();
-
-			}
-			while(key==0xff);
-
-			if(key=='+'||key=='*'||key=='-'||key=='/'){
-				operation=key;//this used for switch case
+				first_number[arr_counter1]=key; //this array to store number u enter
+				//fnum=fnum*10+key;
 				LCD_voidSetPosition(1,counter1);
-				LCD_voidSendChar(key);
-				break;
+				LCD_voidSendNumber(key);
+				counter1++;
+				arr_counter1++;
 			}
 
-			first_number[arr_counter1]=key; //this array to store number u enter
-			//fnum=fnum*10+key;
-			LCD_voidSetPosition(1,counter1);
-			LCD_voidSendNumber(key);
-			counter1++;
-			arr_counter1++;
-		}
+			//Getting second number
+			u8 counter2=counter1+1;
+			u8 arr_counter2=0;
 
-		//Getting second number
-		u8 counter2=counter1+1;
-		u8 arr_counter2=0;
+			while(1){
+				do{
+					key=KPD_u8GetPresssed();
 
-		while(1){
-			do{
-				key=KPD_u8GetPresssed();
+				}
+				while(key==0xff);
 
-			}
-			while(key==0xff);
+				if(key=='='){
+					LCD_voidSetPosition(1,counter2);
 
-			if(key=='='){
+					LCD_voidSendChar(key);
+					break;
+				}
+
+				second_number[arr_counter2]=key;
+				//Snum=Snum*10+key;
 				LCD_voidSetPosition(1,counter2);
-
-				LCD_voidSendChar(key);
-				break;
+				LCD_voidSendNumber(key);
+				counter2 ++;
+				arr_counter2++;
 			}
 
-			second_number[arr_counter2]=key;
-			//Snum=Snum*10+key;
-			LCD_voidSetPosition(1,counter2);
-			LCD_voidSendNumber(key);
-			counter2 ++;
-			arr_counter2++;
-		}
+			u32 number1 =arrayToNumber(first_number,arr_counter1);//this function to transfer array to number {1,2,3} => 123
+			u32 number2 =arrayToNumber(second_number,arr_counter2);
+			/********************** switch cases for operator ***************************/
+			switch(operation){
+			case '*':LCD_voidSetPosition(1,counter2+1);LCD_voidSendNumber(number1*number2);  break;
+			case '/': LCD_voidSetPosition(1,counter2+1);
+			if(number2==0){
+				LCD_voidSendString("Infinity");
+			}
+			else{
 
-		u32 number1 =arrayToNumber(first_number,arr_counter1);//this function to transfer array to number {1,2,3} => 123
-		u32 number2 =arrayToNumber(second_number,arr_counter2);
-/********************** switch cases for operator ***************************/
-		switch(operation){
-		case '*':LCD_voidSetPosition(1,counter2+1);LCD_voidSendNumber(number1*number2);  break;
-		case '/': LCD_voidSetPosition(1,counter2+1);
-		if(number2==0){
-			LCD_voidSendString("Infinity");
-		}
-		else{
+				LCD_voidSendNumber(number1/number2);} break;
+			case '-': LCD_voidSetPosition(1,counter2+1);
+			if(number2>number1){
+				LCD_voidSendChar('-');
+				LCD_voidSetPosition(1,counter2+2);
+				LCD_voidSendNumber(number2-number1);
 
-		LCD_voidSendNumber(number1/number2);} break;
-		case '-': LCD_voidSetPosition(1,counter2+1);
-		if(number2>number1){
-			LCD_voidSendChar('-');
-			LCD_voidSetPosition(1,counter2+2);
-			LCD_voidSendNumber(number2-number1);
+			}
+			else{
+				LCD_voidSendNumber(number1-number2);} break;
+			case '+': LCD_voidSetPosition(1,counter2+1);LCD_voidSendNumber(number1+number2); break;
 
+			}
+			_delay_ms(1500);
+			LCD_voidClearScreen();
 		}
-		else{
-		LCD_voidSendNumber(number1-number2);} break;
-		case '+': LCD_voidSetPosition(1,counter2+1);LCD_voidSendNumber(number1+number2); break;
-
-		}
-		_delay_ms(1500);
-		LCD_voidClearScreen();
 		}
 		else{
 
-		LCD_voidClearScreen();
+			LCD_voidClearScreen();
 			LCD_voidSendString("Wrong Password");
 			_delay_ms(1000);
 			LCD_voidClearScreen();
@@ -200,7 +204,7 @@ LCD_voidClearScreen();
 			}
 		}
 
-		}
+	}
 
 	return 0;
 }
