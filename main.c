@@ -44,6 +44,7 @@ u8 CheckPassword[check_password_size];
 int main(void){
 	LCD_voidInit();
 	KPD_voidInit();
+	DIO_enumSetPinDirection(DIO_PORTC,DIO_PIN5,DIO_PIN_OUTPUT);
 	u8 key;
 	//set password
 	LCD_voidSendString("Set Password ");
@@ -193,6 +194,10 @@ int main(void){
 
 			LCD_voidClearScreen();
 			LCD_voidSendString("Wrong Password");
+			DIO_enumSetPinValue(DIO_PORTC,DIO_PIN5,DIO_PIN_HIGH);
+			_delay_ms(500);
+			DIO_enumSetPinValue(DIO_PORTC,DIO_PIN5,DIO_PIN_LOW);
+
 			_delay_ms(1000);
 			LCD_voidClearScreen();
 			LCD_voidSendString("Try Again");
